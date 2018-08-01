@@ -28,7 +28,7 @@ public class DatabaseConfig {
     private Environment env;
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean EntityManagerFactoryBean(){
+    public LocalContainerEntityManagerFactoryBean EntityManagerFactoryBean() throws IllegalAccessException {
         LocalContainerEntityManagerFactoryBean en = new LocalContainerEntityManagerFactoryBean();
         en.setDataSource(dataSource());
         en.setPackagesToScan(env.getRequiredProperty("db.entity.package"));
@@ -38,16 +38,16 @@ public class DatabaseConfig {
         return en;
     }
 
-    private Properties getHibernateProperties() {
+    private Properties getHibernateProperties() throws IllegalAccessException {
+        try {
         Properties properties = new Properties();
         InputStream is = getClass().getClassLoader().getResourceAsStream("hibernate.properties");
-        try {
+
             properties.load(is);
             return properties;
         } catch (IOException e) {
-            throw new IllegalAccessException("Can not find file properties")
+            throw new IllegalArgumentException("Can not find file properties", e);
         }
-        
     }
 
 
